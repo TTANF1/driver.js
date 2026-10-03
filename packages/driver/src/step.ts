@@ -114,6 +114,13 @@ export function resolveTourStep(ctx: Context, stepIndex: number, defaults: TourS
   };
 }
 
+export function resolveStepButtons(ctx: Context, step?: DriveStep) {
+  return {
+    showButtons: step?.popover?.showButtons || ctx.getConfig("showButtons") || [],
+    disableButtons: step?.popover?.disableButtons || ctx.getConfig("disableButtons") || [],
+  };
+}
+
 function resolveStepPosition(ctx: Context, element: Element, step: DriveStep): PositionOptions {
   const stagePadding = ctx.getConfig("stagePadding") || 0;
 
@@ -140,8 +147,7 @@ function resolveStepPopover(ctx: Context, element: Element, step: DriveStep): Po
     title: popover.title,
     description: popover.description,
 
-    showButtons: popover.showButtons || ctx.getConfig("showButtons")!,
-    disableButtons: popover.disableButtons || ctx.getConfig("disableButtons")! || [],
+    ...resolveStepButtons(ctx, step),
     showProgress: popover.showProgress || ctx.getConfig("showProgress") || false,
 
     progressText: popover.progressText ?? (ctx.getConfig("progressText") || DEFAULT_PROGRESS_TEXT),

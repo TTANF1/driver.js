@@ -106,3 +106,65 @@ describe("keyboard control", () => {
     expect(d.getActiveIndex()).toBe(0);
   });
 });
+
+describe("keyboard control follows the buttons", () => {
+  it("ignores ArrowRight when the next button is hidden", async () => {
+    const d = createDriver({ animate: false, showButtons: ["previous", "close"], steps: SAMPLE_STEPS });
+    d.drive();
+    await nextFrame();
+
+    pressKey("ArrowRight");
+    await nextFrame();
+    expect(d.getActiveIndex()).toBe(0);
+  });
+
+  it("ignores ArrowLeft when the previous button is hidden", async () => {
+    const d = createDriver({ animate: false, showButtons: ["next", "close"], steps: SAMPLE_STEPS });
+    d.drive(1);
+    await nextFrame();
+
+    pressKey("ArrowLeft");
+    await nextFrame();
+    expect(d.getActiveIndex()).toBe(1);
+  });
+
+  it("ignores ArrowRight when the next button is disabled", async () => {
+    const d = createDriver({
+      animate: false,
+      steps: [
+        { element: "#intro", popover: { title: "Step 1", disableButtons: ["next"] } },
+        { element: "#card-1", popover: { title: "Step 2" } },
+      ],
+    });
+    d.drive();
+    await nextFrame();
+
+    pressKey("ArrowRight");
+    await nextFrame();
+    expect(d.getActiveIndex()).toBe(0);
+  });
+
+  it("ignores Escape when the close button is disabled", () => {
+    const d = createDriver({ animate: false, disableButtons: ["close"], steps: SAMPLE_STEPS });
+    d.drive();
+    pressKey("Escape");
+
+    expect(d.isActive()).toBe(true);
+  });
+
+  it("still closes with Escape when the close button is only hidden", () => {
+    const d = createDriver({ animate: false, showButtons: ["next", "previous"], steps: SAMPLE_STEPS });
+    d.drive();
+    pressKey("Escape");
+
+    expect(d.isActive()).toBe(false);
+  });
+
+  it("closes a highlight with Escape", () => {
+    const d = createDriver({ animate: false });
+    d.highlight({ element: "#intro", popover: { title: "Intro" } });
+    pressKey("Escape");
+
+    expect(d.isActive()).toBe(false);
+  });
+});

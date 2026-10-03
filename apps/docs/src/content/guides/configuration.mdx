@@ -59,6 +59,8 @@ type Config = {
   stageRadius?: number;
 
   // Whether to allow keyboard navigation. (default: true)
+  // Arrow keys are ignored when their button is hidden or disabled,
+  // and Escape is ignored when the close button is disabled.
   allowKeyboardControl?: boolean;
 
   // Whether to disable interaction with the highlighted element. (default: false)

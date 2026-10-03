@@ -1,9 +1,16 @@
-import { destroyPopover, Popover } from "./popover";
+import { AllowedButtons, destroyPopover, Popover } from "./popover";
 import { destroyOverlay } from "./overlay";
 import { destroyEvents, initEvents, requireRefresh } from "./events";
 import { Config, createContext, DriverHook } from "./context";
 import { destroyHighlight, highlight } from "./highlight";
-import { findReachableIndex, resolveNextHook, resolvePrevHook, resolveTourStep, shouldSkipStep } from "./step";
+import {
+  findReachableIndex,
+  resolveNextHook,
+  resolvePrevHook,
+  resolveStepButtons,
+  resolveTourStep,
+  shouldSkipStep,
+} from "./step";
 import { resolveElement } from "./utils";
 import "./driver.css";
 
@@ -62,6 +69,21 @@ export function driver(options: Config = {}): Driver {
     }
 
     destroy();
+  }
+
+  function handleEscape() {
+    const { disableButtons } = resolveStepButtons(ctx, ctx.getState("__activeStep"));
+    if (disableButtons.includes("close")) {
+      return;
+    }
+
+    handleClose();
+  }
+
+  function canUseButton(button: AllowedButtons) {
+    const { showButtons, disableButtons } = resolveStepButtons(ctx, ctx.getState("__activeStep"));
+
+    return showButtons.includes(button) && !disableButtons.includes(button);
   }
 
   function handleOverlayClick() {
@@ -179,6 +201,10 @@ export function driver(options: Config = {}): Driver {
       return;
     }
 
+    if (!canUseButton("previous")) {
+      return;
+    }
+
     const onPrevClick = resolvePrevHook(ctx, activeStep);
     if (onPrevClick) {
       return onPrevClick(activeElement, activeStep, ctx.getHookOpts());
@@ -197,6 +223,10 @@ export function driver(options: Config = {}): Driver {
     const activeStep = ctx.getState("__activeStep");
     const activeElement = ctx.getState("__activeElement");
     if (typeof activeIndex === "undefined" || typeof activeStep === "undefined") {
+      return;
+    }
+
+    if (!canUseButton("next")) {
       return;
     }
 
@@ -229,7 +259,7 @@ export function driver(options: Config = {}): Driver {
 
     ctx.listen("overlayClick", handleOverlayClick);
     ctx.listen("activeElementClick", handleActiveElementClick);
-    ctx.listen("escapePress", handleClose);
+    ctx.listen("escapePress", handleEscape);
     ctx.listen("closeClick", handleClose);
     ctx.listen("arrowLeftPress", handleArrowLeft);
     ctx.listen("arrowRightPress", handleArrowRight);
