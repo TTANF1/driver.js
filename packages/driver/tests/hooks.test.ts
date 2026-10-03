@@ -124,4 +124,38 @@ describe("hook opts index", () => {
     const [, , options] = onDeselected.mock.calls[0];
     expect(options.index).toBe(1);
   });
+
+  it("fires onDeselected between two steps without an element", async () => {
+    const onDeselected = vi.fn();
+    const d = createDriver({
+      animate: false,
+      onDeselected,
+      steps: [{ popover: { title: "One" } }, { popover: { title: "Two" } }],
+    });
+    d.drive();
+    await nextFrame();
+    d.moveNext();
+
+    expect(onDeselected).toHaveBeenCalledTimes(1);
+    expect(onDeselected.mock.calls[0][0]).toBeUndefined();
+    expect(onDeselected.mock.calls[0][1].popover.title).toBe("One");
+  });
+
+  it("fires onDeselected between two steps on the same element", async () => {
+    const onDeselected = vi.fn();
+    const d = createDriver({
+      animate: false,
+      onDeselected,
+      steps: [
+        { element: "#intro", popover: { title: "One" } },
+        { element: "#intro", popover: { title: "Two" } },
+      ],
+    });
+    d.drive();
+    await nextFrame();
+    d.moveNext();
+
+    expect(onDeselected).toHaveBeenCalledTimes(1);
+    expect(onDeselected.mock.calls[0][1].popover.title).toBe("One");
+  });
 });

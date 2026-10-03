@@ -111,8 +111,8 @@ function transferHighlight(ctx: Context, toElement: Element, toStep: DriveStep) 
 
   const hookOpts = ctx.getHookOpts();
 
-  if (!isFirstHighlight && deselectedHook) {
-    deselectedHook(isFromDummyElement ? undefined : fromElement, fromStep!, hookOpts);
+  if (fromStep && fromStep !== toStep && deselectedHook) {
+    deselectedHook(isFromDummyElement ? undefined : fromElement, fromStep, hookOpts);
   }
 
   if (highlightStartedHook) {
