@@ -10,6 +10,30 @@ ships, these entries move under a versioned heading.
 
 ## Unreleased
 
+### Added
+
+- `closeBtnLabel` (driver and step level) to set the close button's
+  `aria-label`, for translated tours. Defaults to `Close`.
+  ([#623](https://github.com/nilbuild/driver.js/issues/623))
+
+### Changed
+
+- Only one instance is on screen at a time. Starting a tour or highlight closes
+  any other active instance; it gets `onDeselected` and `onDestroyed` but not
+  `onDestroyStarted`.
+
+### Fixed
+
+- `destroy()` on an instance that is not active is now a no-op instead of
+  tearing down another instance's tour.
+  ([#504](https://github.com/nilbuild/driver.js/issues/504))
+- The highlighted element's own `aria-controls`, `aria-expanded` and
+  `aria-haspopup` are restored when the highlight moves on or the tour ends,
+  instead of being removed.
+  ([#495](https://github.com/nilbuild/driver.js/issues/495))
+- No more small white square between steps without an element.
+  ([#549](https://github.com/nilbuild/driver.js/issues/549))
+
 ## 1.8.0
 
 ### Added
