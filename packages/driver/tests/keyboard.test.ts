@@ -20,6 +20,14 @@ describe("keyboard control", () => {
     expect(d.isActive()).toBe(true);
   });
 
+  it("still closes with Escape when overlayClickBehavior is 'none'", () => {
+    const d = createDriver({ animate: false, overlayClickBehavior: "none", steps: SAMPLE_STEPS });
+    d.drive();
+    pressKey("Escape");
+
+    expect(d.isActive()).toBe(false);
+  });
+
   it("navigates with the arrow keys", async () => {
     const d = createDriver({ animate: false, steps: SAMPLE_STEPS });
     d.drive();

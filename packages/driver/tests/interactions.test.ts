@@ -191,6 +191,27 @@ describe("overlay click behaviour", () => {
     expect(d.isActive()).toBe(false);
   });
 
+  it("ignores overlay clicks when behaviour is 'none'", async () => {
+    const d = createDriver({ animate: false, overlayClickBehavior: "none", steps: SAMPLE_STEPS });
+    d.drive();
+    await nextFrame();
+
+    clickOverlay();
+
+    expect(d.isActive()).toBe(true);
+    expect(d.getActiveIndex()).toBe(0);
+  });
+
+  it("still closes with the close button when behaviour is 'none'", async () => {
+    const d = createDriver({ animate: false, overlayClickBehavior: "none", steps: SAMPLE_STEPS });
+    d.drive();
+    await nextFrame();
+
+    navButton("close")?.click();
+
+    expect(d.isActive()).toBe(false);
+  });
+
   it("runs a custom overlayClickBehavior with the active element, step and driver", async () => {
     const overlayClickBehavior = vi.fn();
     const d = createDriver({ animate: false, overlayClickBehavior, steps: SAMPLE_STEPS });

@@ -44,10 +44,12 @@ type Config = {
   // Opacity of the backdrop. (default: 0.5)
   overlayOpacity?: number;
   // What to do when the overlay backdrop is clicked.
-  // Possible options are 'close', 'nextStep', or a custom function. (default: 'close')
+  // Possible options are 'close', 'nextStep', 'none', or a custom function. (default: 'close')
+  // Use 'none' to ignore overlay clicks while Escape and the close button still work.
   overlayClickBehavior?:
     | "close"
     | "nextStep"
+    | "none"
     | ((
         element?: Element,
         step: DriveStep,
