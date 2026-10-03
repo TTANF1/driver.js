@@ -84,8 +84,8 @@ type Config = {
 
   // Wait up to this many milliseconds for a step's element to appear before
   // treating it as missing (centered fallback popover, or a skip when
-  // skipMissingElement is set). The current step stays highlighted while
-  // waiting. Useful when the next element is rendered on demand, e.g. inside
+  // skipMissingElement is set). The current step stays highlighted, with its
+  // popover hidden, while waiting. Useful when the next element is rendered on demand, e.g. inside
   // a modal that the previous step's click opens. Can be configured at the
   // step level. (default: 0, off)
   waitForElement?: number;

@@ -1,4 +1,4 @@
-import { AllowedButtons, destroyPopover, Popover } from "./popover";
+import { AllowedButtons, destroyPopover, hidePopover, Popover } from "./popover";
 import { destroyOverlay } from "./overlay";
 import { destroyEvents, initEvents, requireRefresh } from "./events";
 import { Config, createContext, DriverHook } from "./context";
@@ -319,10 +319,11 @@ export function driver(options: Config = {}): Driver {
 
     const currentStep = steps[stepIndex];
 
-    // The current step stays highlighted while waiting; a timeout falls
-    // through to the usual missing-element handling below.
+    // The current step stays highlighted, with its popover hidden, while
+    // waiting; a timeout falls through to the usual missing-element handling below.
     const waitTimeout = currentStep.waitForElement ?? ctx.getConfig("waitForElement") ?? 0;
     if (!hasWaitedForElement && waitTimeout > 0 && currentStep.element && !resolveElement(currentStep.element)) {
+      hidePopover(ctx.getState("popover"));
       waitForStepElement(currentStep, waitTimeout, () => drive(stepIndex, true));
       return;
     }

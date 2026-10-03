@@ -89,7 +89,7 @@ driverObj.drive();
 
 ## Waiting for Elements
 
-When you know the next element is rendered on demand, you often don't need the manual `onNextClick` dance at all. Give the step a `waitForElement` timeout and the tour waits for the element to appear, staying on the current step in the meantime. Pair it with `advanceOnClick` when the highlighted element itself is what triggers the rendering, e.g. a button that opens a modal:
+When you know the next element is rendered on demand, you often don't need the manual `onNextClick` dance at all. Give the step a `waitForElement` timeout and the tour waits for the element to appear, staying on the current step with its popover hidden in the meantime. Pair it with `advanceOnClick` when the highlighted element itself is what triggers the rendering, e.g. a button that opens a modal:
 
 ```js
 const driverObj = driver({

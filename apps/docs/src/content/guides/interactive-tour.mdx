@@ -10,7 +10,7 @@ import { CodeSample } from "../../components/CodeSample.tsx";
 Sometimes the best way forward in a tour is the product itself: click the button you are pointing at, not a "Next" in the popover. Two options make this work without any custom hooks:
 
 - `advanceOnClick` advances the tour when the highlighted element is clicked, exactly as if the next button was pressed. The element's own click behavior still runs.
-- `waitForElement` makes a step wait up to the given number of milliseconds for its element to appear, staying on the current step in the meantime.
+- `waitForElement` makes a step wait up to the given number of milliseconds for its element to appear, staying on the current step with its popover hidden in the meantime.
 
 Both can be set for the whole tour or per step. The tour below has `advanceOnClick` enabled, so you can click the highlighted lines to walk through it.
 

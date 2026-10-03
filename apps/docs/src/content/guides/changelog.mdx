@@ -25,6 +25,9 @@ ships, these entries move under a versioned heading.
   their button is hidden or disabled, and Escape does nothing when the close
   button is disabled.
   ([#589](https://github.com/nilbuild/driver.js/issues/589))
+- The current popover is hidden while `waitForElement` waits for the next
+  step's element, so a stale step no longer stays on screen.
+  ([#578](https://github.com/nilbuild/driver.js/issues/578))
 - Only one instance is on screen at a time. Starting a tour or highlight closes
   any other active instance; it gets `onDeselected` and `onDestroyed` but not
   `onDestroyStarted`.

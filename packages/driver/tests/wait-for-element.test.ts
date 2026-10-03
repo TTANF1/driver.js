@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createDriver, nextFrame, popoverTitle, useDriverHarness } from "./utils";
+import { createDriver, nextFrame, popoverEl, popoverTitle, useDriverHarness } from "./utils";
 
 useDriverHarness();
 
@@ -34,6 +34,45 @@ describe("waitForElement", () => {
     expect(d.getActiveIndex()).toBe(1);
     expect(popoverTitle()).toBe("Step 2");
     expect(d.getActiveElement()?.id).toBe("late");
+  });
+
+  it("hides the current popover while waiting", async () => {
+    const d = createDriver({
+      animate: false,
+      steps: [
+        { element: "#intro", popover: { title: "Step 1" } },
+        { element: "#late", waitForElement: 500, popover: { title: "Step 2" } },
+      ],
+    });
+    d.drive();
+    d.moveNext();
+
+    expect(popoverEl()?.style.display).toBe("none");
+    expect(document.getElementById("intro")?.classList.contains("driver-active-element")).toBe(true);
+
+    appendElement("late");
+    await tick();
+
+    expect(popoverEl()?.style.display).toBe("block");
+    expect(popoverTitle()).toBe("Step 2");
+  });
+
+  it("shows the fallback popover when the wait times out", async () => {
+    const d = createDriver({
+      animate: false,
+      steps: [
+        { element: "#intro", popover: { title: "Step 1" } },
+        { element: "#never", waitForElement: 40, popover: { title: "Step 2" } },
+      ],
+    });
+    d.drive();
+    d.moveNext();
+    expect(popoverEl()?.style.display).toBe("none");
+
+    await tick(80);
+
+    expect(popoverEl()?.style.display).toBe("block");
+    expect(popoverTitle()).toBe("Step 2");
   });
 
   it("waits for the first step's element on the initial drive", async () => {
