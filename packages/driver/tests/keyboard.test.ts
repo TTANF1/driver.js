@@ -126,6 +126,16 @@ describe("keyboard control follows the buttons", () => {
     expect(d.getActiveIndex()).toBe(0);
   });
 
+  it("ignores ArrowRight when the next button is disabled globally", async () => {
+    const d = createDriver({ animate: false, disableButtons: ["next"], steps: SAMPLE_STEPS });
+    d.drive();
+    await nextFrame();
+
+    pressKey("ArrowRight");
+    await nextFrame();
+    expect(d.getActiveIndex()).toBe(0);
+  });
+
   it("ignores ArrowLeft when the previous button is hidden", async () => {
     const d = createDriver({ animate: false, showButtons: ["next", "close"], steps: SAMPLE_STEPS });
     d.drive(1);

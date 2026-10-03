@@ -103,7 +103,10 @@ export function resolveTourStep(ctx: Context, stepIndex: number, defaults: TourS
     popover: {
       showButtons: calculatedButtons,
       nextBtnText: !hasNextStep ? doneBtnText : undefined,
-      disableButtons: [...(!hasPreviousStep ? ["previous" as AllowedButtons] : [])],
+      disableButtons: [
+        ...(ctx.getConfig("disableButtons") || []),
+        ...(!hasPreviousStep ? ["previous" as AllowedButtons] : []),
+      ],
       showProgress,
       onNextClick: onNextClick ? onNextClick : defaults.onNextClick,
       onPrevClick: onPrevClick ? onPrevClick : defaults.onPrevClick,

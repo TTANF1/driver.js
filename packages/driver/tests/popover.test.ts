@@ -258,15 +258,35 @@ describe("popover config fallbacks", () => {
     expect(navButton("next")?.disabled).toBe(true);
   });
 
-  it("ignores the global disableButtons during a tour", () => {
-    // drive() always composes a step-level disableButtons (to disable
-    // "previous" on the first step), which shadows the global config. This
-    // pins the long-standing behaviour rather than endorsing it.
+  it("applies the global disableButtons during a tour", () => {
     const d = createDriver({ animate: false, disableButtons: ["next"], steps: SAMPLE_STEPS });
+    d.drive(1);
+
+    expect(navButton("next")?.disabled).toBe(true);
+    expect(navButton("prev")?.disabled).toBe(false);
+  });
+
+  it("still disables previous on the first step with a global disableButtons", () => {
+    const d = createDriver({ animate: false, disableButtons: ["close"], steps: SAMPLE_STEPS });
     d.drive();
 
-    expect(navButton("next")?.disabled).toBe(false);
     expect(navButton("prev")?.disabled).toBe(true);
+    expect(navButton("close")?.disabled).toBe(true);
+    expect(navButton("next")?.disabled).toBe(false);
+  });
+
+  it("lets a step's disableButtons replace the global one", () => {
+    const d = createDriver({
+      animate: false,
+      disableButtons: ["next"],
+      steps: [
+        { element: "#intro", popover: { title: "Step 1" } },
+        { element: "#card-1", popover: { title: "Step 2", disableButtons: [] } },
+      ],
+    });
+    d.drive(1);
+
+    expect(navButton("next")?.disabled).toBe(false);
   });
 
   it("hides the close button in a tour when allowClose is false", () => {

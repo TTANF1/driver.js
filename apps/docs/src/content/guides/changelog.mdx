@@ -45,6 +45,8 @@ ships, these entries move under a versioned heading.
   ([#549](https://github.com/nilbuild/driver.js/issues/549))
 - `onDeselected` now fires when moving between two steps on the same element,
   or between two steps without an element.
+- The driver-level `disableButtons` now applies to tour steps. It used to be
+  ignored during a tour. A step's own `disableButtons` still replaces it.
 
 ## 1.8.0
 
