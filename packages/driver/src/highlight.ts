@@ -5,6 +5,42 @@ import { hidePopover } from "./popover";
 import { renderStepPopover, repositionStepPopover } from "./step";
 import { bringInView, isScrollable, resolveElement } from "./utils";
 
+const POPOVER_ARIA: Record<string, string> = {
+  "aria-haspopup": "dialog",
+  "aria-expanded": "true",
+  "aria-controls": "driver-popover-content",
+};
+
+const originalAria = new WeakMap<Element, Record<string, string | null>>();
+
+function setPopoverAria(element: Element) {
+  if (!originalAria.has(element)) {
+    const original = Object.fromEntries(Object.keys(POPOVER_ARIA).map(name => [name, element.getAttribute(name)]));
+    originalAria.set(element, original);
+  }
+
+  for (const [name, value] of Object.entries(POPOVER_ARIA)) {
+    element.setAttribute(name, value);
+  }
+}
+
+function restoreAria(element: Element) {
+  const original = originalAria.get(element);
+  if (!original) {
+    return;
+  }
+
+  for (const [name, value] of Object.entries(original)) {
+    if (value === null) {
+      element.removeAttribute(name);
+    } else {
+      element.setAttribute(name, value);
+    }
+  }
+
+  originalAria.delete(element);
+}
+
 function mountDummyElement(): Element {
   const existingDummy = document.getElementById("driver-dummy-element");
   if (existingDummy) {
@@ -144,10 +180,10 @@ function transferHighlight(ctx: Context, toElement: Element, toStep: DriveStep) 
     element.classList.remove("driver-active-element-parent", "driver-active-element-parent-no-scroll");
   });
 
-  fromElement.classList.remove("driver-active-element", "driver-no-interaction");
-  fromElement.removeAttribute("aria-haspopup");
-  fromElement.removeAttribute("aria-expanded");
-  fromElement.removeAttribute("aria-controls");
+  document.querySelectorAll(".driver-active-element").forEach(element => {
+    element.classList.remove("driver-active-element", "driver-no-interaction");
+    restoreAria(element);
+  });
 
   const disableActiveInteraction = toStep.disableActiveInteraction ?? ctx.getConfig("disableActiveInteraction");
   if (disableActiveInteraction) {
@@ -164,9 +200,7 @@ function transferHighlight(ctx: Context, toElement: Element, toStep: DriveStep) 
   }
 
   toElement.classList.add("driver-active-element");
-  toElement.setAttribute("aria-haspopup", "dialog");
-  toElement.setAttribute("aria-expanded", "true");
-  toElement.setAttribute("aria-controls", "driver-popover-content");
+  setPopoverAria(toElement);
 }
 
 export function destroyHighlight() {
@@ -178,8 +212,6 @@ export function destroyHighlight() {
     }
 
     element.classList.remove("driver-active-element", "driver-no-interaction");
-    element.removeAttribute("aria-haspopup");
-    element.removeAttribute("aria-expanded");
-    element.removeAttribute("aria-controls");
+    restoreAria(element);
   });
 }
