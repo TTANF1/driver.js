@@ -100,6 +100,10 @@ function renderOverlay(ctx: Context, stagePosition: StageDefinition) {
 }
 
 function stageOptions(ctx: Context) {
+  if (ctx.getState("activeElement")?.id === "driver-dummy-element") {
+    return { padding: 0, radius: 0 };
+  }
+
   return {
     padding: ctx.getConfig("stagePadding") || 0,
     radius: ctx.getConfig("stageRadius") || 0,

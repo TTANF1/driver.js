@@ -52,6 +52,17 @@ describe("overlay configuration", () => {
     expect(overlayPath()?.getAttribute("d")).toContain("M-15,-20");
   });
 
+  it("leaves no cutout gap for a step without an element", async () => {
+    const d = createDriver({ animate: false, steps: [{ popover: { title: "No element" } }] });
+    d.drive();
+    await nextFrame();
+
+    const path = overlayPath()?.getAttribute("d");
+    const dummy = document.getElementById("driver-dummy-element")!.getBoundingClientRect();
+    expect(path).toContain(`M${dummy.x},${dummy.y} h0`);
+    expect(path).toContain("a0,0");
+  });
+
   it("falls back to a solid black fill when overlayColor is empty", async () => {
     const d = createDriver({ animate: false, overlayColor: "", steps: SAMPLE_STEPS });
     d.drive();
